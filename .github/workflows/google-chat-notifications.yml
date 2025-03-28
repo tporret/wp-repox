@@ -1,14 +1,29 @@
-name: Test Google Chat Notification
+name: Send Message to Google Chat
 
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, closed] # Common PR events
+  push:
+    branches:
+      - main # Or your desired branches
 
 jobs:
-  test_notify:
+  google-chat-notification:
+    name: Google Chat Notification
     runs-on: ubuntu-latest
+
     steps:
-      - name: Send Test Notification
-        uses: benjlevesque/slack-to-google-chat@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Send Google Chat Notification
+        if: always() # Ensure notification even on failures
+        uses: SimonScholz/google-chat-action@main
         with:
-          webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
-          text: "Test notification from GitHub Actions"
+          webhookUrl: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
+          message: |
+            ${{ github.event_name }} on ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+            ${{ github.event.pull_request.html_url }}
+            ${{ github.event.head_commit.message }}
