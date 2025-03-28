@@ -1,23 +1,14 @@
-name: Google Chat Notification
+name: Test Google Chat Notification
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  notify:
+  test_notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Send Google Chat Notification
+      - name: Send Test Notification
         uses: benjlevesque/slack-to-google-chat@v1
         with:
-          webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }} # Store your webhook URL as a secret
-          text: |
-            :rocket: New commit to main branch!
-            Commit message: ${{ github.event.head_commit.message }}
-            Author: ${{ github.event.head_commit.author.name }}
-            Commit URL: ${{ github.event.head_commit.url }}
+          webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          text: "Test notification from GitHub Actions"
