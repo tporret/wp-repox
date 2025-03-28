@@ -1,23 +1,21 @@
-name: Send Message to Google Chat
+name: Google Chat Notification
 
 on:
-  pull_request:
   push:
     branches:
+      - main # or your branch
 
-  google-chat-action:
-    name: Google Chat GitHub Action
+jobs:
+  notify:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-
-      # ... Run your build stuff or whatever ...
-
-      - name: Notify Google Chat
-        if: ${{ always() }} # Use always to ensure that the notification is also send on failure of former steps
-        uses: SimonScholz/google-chat-action@main
+      - name: Send Google Chat Notification
+        uses: google-github-actions/chat-message@v1
         with:
-          webhookUrl: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
+          webhook_url: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          text: |
+            **New Push to ${{ github.repository }}**
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+            Author: ${{ github.event.head_commit.author.name }}
