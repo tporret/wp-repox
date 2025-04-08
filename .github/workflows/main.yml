@@ -1,0 +1,39 @@
+name: Google Chat Notification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Or actions/checkout@v4 if you want the standard one
+
+      - name: Send Google Chat Notification
+        if: always()
+        uses: SimonScholz/google-chat-action@main
+        with:
+          webhookUrl: "${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}"
+          message: |
+            {% set event_name = github.event_name %}
+            {% set repository = github.repository %}
+            {% set sha = github.sha %}
+            {% set ref_name = github.ref_name %}
+            {% set workflow_run_url = github.server_url + '/' + repository + '/actions/runs/' + github.run_id %}
+            
+            {% if job.status == 'success' %}✅{% elif job.status == 'failure' %}❌{% else %}ℹ️{% endif %} {{ event_name | capitalize }} on {{ repository }}
+            Commit: {{ sha }}
+            Branch: {{ ref_name }}
+            {% if event_name == 'pull_request' %}
+            Pull Request: {{ github.event.pull_request.title }}
+            URL: {{ github.event.pull_request.html_url }}
+            {% endif %}
+            Message: {{ github.event.head_commit.message | truncate(100, True, '...') }}
+            Workflow Run: {{ workflow_run_url }}
