@@ -34,3 +34,4 @@ jobs:
         run: node scripts/index.js
         env:
           WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          
