@@ -13,7 +13,8 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     env:
-          WEBHOOK_URL: https://chat.googleapis.com/v1/spaces/AAAABWvUOKg/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=bU-fIrqt7yIiyvLBir34jWtt1uGMHUQgFsospcjz9SI
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 # Ensures the repository code is available
@@ -31,7 +32,10 @@ jobs:
         run: npm install axios
         working-directory: scripts # Ensure axios is installed in the correct directory
 
-      - name: Send Google Chat Notification
-        if: always()
+      - name: Send Google Chat Notification (No secret)
+        if: ${{ env.WEBHOOK_URL == '' }}
+        run: echo 'No secret detected. Skipping notification.'
+
+      - name: Send Google Chat Notification (Secret present)
+        if: ${{ env.WEBHOOK_URL != '' }}
         run: node scripts/index.js
-          
