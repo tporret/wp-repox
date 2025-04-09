@@ -12,6 +12,8 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    env:
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 # Ensures the repository code is available
@@ -30,8 +32,6 @@ jobs:
         working-directory: scripts # Ensure axios is installed in the correct directory
 
       - name: Send Google Chat Notification
-        env:
-          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
         if: always()
         run: node scripts/index.js
           
