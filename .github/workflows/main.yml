@@ -13,7 +13,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     env:
-          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          WEBHOOK_URL: https://chat.googleapis.com/v1/spaces/AAAABWvUOKg/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=bU-fIrqt7yIiyvLBir34jWtt1uGMHUQgFsospcjz9SI
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 # Ensures the repository code is available
