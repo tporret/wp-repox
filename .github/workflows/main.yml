@@ -30,9 +30,8 @@ jobs:
         working-directory: scripts # Ensure axios is installed in the correct directory
 
       - name: Send Google Chat Notification
+        env:
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
         if: always()
         run: node scripts/index.js
-        env:
-          CI: true
-          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
           
