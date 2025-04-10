@@ -1,41 +1,25 @@
-name: Google Chat Notification
+name: Send Message to Google Chat
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+  push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  notify:
+  google-chat-action:
+    name: Google Chat GitHub Action
     runs-on: ubuntu-latest
-    env:
-          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4 # Ensures the repository code is available
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Notify Google Chat
+        if: ${{ always() }}
+        uses: tporret/google-chat-action@main
         with:
-          node-version: '18' # Specify the Node.js version required for your script
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: scripts # Adjust if your `package.json` is in a different directory
-
-      - name: Install axios
-        run: npm install axios
-        working-directory: scripts # Ensure axios is installed in the correct directory
-
-      - name: Send Google Chat Notification (No secret)
-        if: ${{ env.WEBHOOK_URL == '' }}
-        run: echo 'No secret detected. Skipping notification.'
-
-      - name: Send Google Chat Notification (Secret present)
-        if: ${{ env.WEBHOOK_URL != '' }}
-        run: node scripts/index.js
+          webhookUrl: '${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}'
+          jobStatus: '${{ job.status }}'
